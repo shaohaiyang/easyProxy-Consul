@@ -1,3 +1,16 @@
+# 模板化配置Consul-template
+# Consul-template API 功能语法
+# datacenters：在consul目录中查询所有的datacenters，{{datacenters}}
+# file：读取并输出本地磁盘上的文件，如果无法读取，则报错，{{file "/path/to/local/file"}}
+# key：查询consul中该key的值，如果无法转换成一个类字符串的值，则会报错，{{key "service/redis/maxconns@east-aws"}} east-aws指定的是数据中心，{{key "service/redis/maxconns"}}
+# key_or_default：查询consul中该key的值，如果key不存在，则使用指定的值代替，{{key_or_default "service/redis/maxconns@east-aws" "5"}}
+# ls：在consul中查询给定前缀的key的顶级域值，{{range ls "service/redis@east-aws"}} {{.Key}} {{.Value}}{{end}}
+# node：查询consul目录中的单个node，如果不指定node，则是当前agent的，{{node "node1"}}
+# nodes：查询consul目录中的所有nodes，你也可以指定datacenter，{{nodes "@east-aws"}}
+# service：查询consul中匹配的service组，{{service "release.web@east-aws"}}或者{{service "web"}}，也可以返回一组HealthService服务{{range service "web@datacenter"}}  server {{.Name}} {{.Address}}:{{.Port}}{{end}}，默认值返回健康的服务，如果你想返回所有服务，则{{service "web" "any"}}
+# services：查询consul目录中的所有services，{{services}}，也可以指定datacenter：{{services "@east-aws"}}
+# tree：查询consul中给定前缀的所有K/V值，{{range tree "service/redis@east-aws"}} {{.Key}} {{.Value}}{{end}}
+
 # 使用Nginx作为反向代理主要是考虑到它支持 TCP/UDP/HTTP 多种协议
 # nginx.conf Nginx的主要配置文件
 # nginx.http.ctmpl Nginx 基于HTTP、ServerName的反向代理模板
@@ -140,6 +153,7 @@ exit 0
 ```
 
 # 通过curl注册服务脚本
+# 删除服务: curl -v -X PUT http://192.168.13.250:8500/v1/agent/service/deregister/{{.ID}} (repo.upyun.com)
 ```
 curl -X PUT \
 192.168.13.250:8500/v1/agent/service/register \
