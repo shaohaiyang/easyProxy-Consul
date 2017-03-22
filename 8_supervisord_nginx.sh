@@ -4,16 +4,16 @@
 
 #!/bin/sh
 CONSUL="192.168.13.250:8500"
-TEMPLATE_HTTP="/opt/nginx.http.ctmpl:/opt/nginx/conf/conf.d/http.conf"
-TEMPLATE_MARATHON="/opt/marathon.kv.ctmpl:/opt/nginx/conf/conf.d/marathon.conf"
+TEMPLATE_HTTP="/opt/nginx.http.ctmpl:/opt/nginx/conf/conf.d/http.conf:/opt/nginx/sbin/nginx -s reload"
+TEMPLATE_MARATHON="/opt/marathon.kv.ctmpl:/opt/nginx/conf/conf.d/marathon.conf:/opt/nginx/sbin/nginx -s reload"
 TEMPLATE_STREAM="/opt/nginx.stream.ctmpl:/opt/nginx/conf/conf.stream.d/stream.conf:/opt/nginx/sbin/nginx -s reload"
- 
+
 ###docker run -p 88:80 -d --name nginx --volume /tmp/service.ctmpl:/templates/service.ctmpl --link consul:consul jlordiales/nginx-consul
- 
+
 if [ -z "`pidof /opt/nginx/sbin/nginx`" ];then
         /opt/nginx/sbin/nginx -c /opt/nginx/conf/nginx.conf
 fi
- 
+
 if [ -z "`pidof /usr/local/bin/consul-template`" ];then
         /usr/local/bin/consul-template \
         -consul-addr $CONSUL \
