@@ -5,24 +5,41 @@
 # curl -H "Content-type:application/json" -X POST http://192.168.13.250:8080/v2/apps -d @/root/marathon_consul.json
 
 {
-  "id": "marathon-consul",
-  "args": ["--registry=https://192.168.13.250:8500"],
+  "id": "/marathon-consul",
+  "cmd": null,
+  "cpus": 0.1,
+  "mem": 32,
+  "disk": 0,
+  "instances": 3,
+  "args": [
+    "--registry=http://192.168.13.250:8500",
+    "--marathon-location=192.168.13.250:8080"
+  ],
   "container": {
     "type": "DOCKER",
+    "volumes": [],
     "docker": {
-      "image": "{{ marathon_consul_image }}:{{ marathon_consul_image_tag }}",
+      "image": "ciscocloud/marathon-consul",
       "network": "BRIDGE",
-      "portMappings": [{"containerPort": 4000, "hostPort": 4000, "protocol": "tcp"}]
+      "portMappings": [
+        {
+          "containerPort": 4000,
+          "hostPort": 31400,
+          "servicePort": 10000,
+          "protocol": "tcp",
+          "labels": {}
+        }
+      ],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": false
     }
   },
-  "constraints": [["hostname", "UNIQUE"]],
-  "ports": [4000],
-  "healthChecks": [{
-    "protocol": "HTTP",
-    "path": "/health",
-    "portIndex": 0
-  }],
-  "instances": 1,
-  "cpus": 0.1,
-  "mem": 32
+  "portDefinitions": [
+    {
+      "port": 10000,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ]
 }
