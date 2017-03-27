@@ -52,7 +52,7 @@ http {
     #gzip  on;
  
 server {
-    listen       81;
+    listen       81 default_server;
     server_name  _;
     location / {
         root   html;
@@ -210,17 +210,13 @@ exit 0
 ```
 #!/bin/sh
 STRING2=
-STRING3=
 
-cat /tmp/.marathon_upstream | awk -F@ '{name[$1]=name[$1]"\n"$2} END{for(i in name) printf "upstream %s {%s\n}\n",i,name[i]}'
-STRING2="server {\n\tlisten 88 default_server;\n\tserver_name _;\n\tlocation / {\n\t\troot html;\n\t\tindex index.html index.htm;\n\t}\n"
+cat /tmp/.marathon_upstream | awk -F@ '{name[$1]=name[$1]"\n"$2} END{for(i in name) printf "upstream %s {\nleast_conn;%s\n}\n\n",i,name[i]}'
 for name in `awk -F@ '{print $1}' /tmp/.marathon_upstream|sort -u`;do
-        STRING3+="\tlocation /$name/ {\n\t\tproxy_pass http://$name/;\n\t}\n"
+        STRING2+="server {\n\tlisten 88;\n\tserver_name $name;\n\terror_log /opt/nginx/logs/$name.error.log;\n\tcharset utf-8;\n\tlocation / {\n\t\tproxy_pass http://$name;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\t}\n}\n\n"
 done
-STRING3+="\n}"
 
 echo -e $STRING2
-echo -e $STRING3
 rm -rf /tmp/.marathon_upstream
 exit 0
 ```
