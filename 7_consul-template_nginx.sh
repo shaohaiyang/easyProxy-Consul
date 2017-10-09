@@ -84,8 +84,8 @@ include  conf.stream.d/*.conf;
                 {{ if in .Tags "upyun" }}
                         {{if .Tags | contains "http"}}
 upstream {{.Name}} {
-  least_conn;
-  {{ .Address | plugin "/usr/local/bin/concatip.sh" }}
+	least_conn;
+	{{ .Address | plugin "/usr/local/bin/concatip.sh" }}
 }
 
 server {
@@ -113,8 +113,8 @@ server {
                 {{ if in .Tags "upyun" }}
 {{ if in .Tags "tcp" }}
 upstream {{.Name}} {
-  least_conn;
-  {{ .Address | plugin "/usr/local/bin/concatip.sh" }}
+	least_conn;
+	{{ .Address | plugin "/usr/local/bin/concatip.sh" }}
 }
 
 server {
@@ -127,8 +127,8 @@ server {
 
 {{ if in .Tags "udp" }}
 upstream {{.Name}} {
-  least_conn;
-  {{ .Address | plugin "/usr/local/bin/concatip.sh" }}
+	least_conn;
+	{{ .Address | plugin "/usr/local/bin/concatip.sh" }}
 }
 
 server {
@@ -147,7 +147,7 @@ server {
 ```
 #!/bin/sh
 for ip in `echo $1|sed -r 's^[;@#]^ ^g'`;do
-        echo "server $ip max_fails=3 fail_timeout=60 weight=1;"
+        echo "\tserver $ip max_fails=3 fail_timeout=60 weight=1;"
 done
 exit 0
 ```
