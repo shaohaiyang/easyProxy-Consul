@@ -20,4 +20,4 @@ docker run -d --name consul -h node1 \
     -p $IPADDR:8400:8400 \
     -p $IPADDR:8500:8500 \
     -p $IPADDR:8600:53/udp \
-    progrium/consul -server -advertise $IPADDR  -bootstrap-expect 3
+    progrium/consul -server -advertise $IPADDR  -bootstrap-expect 2
