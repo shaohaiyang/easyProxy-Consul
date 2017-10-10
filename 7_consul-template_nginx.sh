@@ -21,7 +21,7 @@
 ```
 user  nobody;
 worker_processes  auto;
-#error_log  logs/error.log  info;
+error_log  logs/error.log  error;
 events {
     worker_connections  10240;
 }
@@ -54,18 +54,19 @@ http {
 server {
     listen       81 default_server;
     server_name  _;
+    access_log off;
+    allow 192.168.0.0/16;
+    deny all;
+
     location / {
-        root   html;
-        index  index.html index.htm;
+	root   html;
+	index  index.html index.htm;
     }
- 
+
     location /stats {
-            stub_status on;
-            allow 192.168.0.0/16;
-            deny all;
-            auth_basic "upyun proxy status";
-            access_log off;
-            auth_basic_user_file .htpasswd;
+	stub_status on;
+	#auth_basic "upyun proxy status";
+	#auth_basic_user_file .htpasswd;
     }
 }
 ##################################################################
@@ -91,7 +92,7 @@ upstream {{.Name}} {
 server {
         listen {{.Port}};
         server_name {{.ID}};
-        error_log       /opt/nginx/logs/{{.ID}}.error.log;
+        error_log	logs/{{.ID}}.error.log;
         charset utf-8;
         location / {
                 proxy_pass      http://{{.Name}};
@@ -213,7 +214,7 @@ STRING2=
 
 cat /tmp/.marathon_upstream | awk -F@ '{name[$1]=name[$1]"\n"$2} END{for(i in name) printf "upstream %s {\nleast_conn;%s\n}\n\n",i,name[i]}'
 for name in `awk -F@ '{print $1}' /tmp/.marathon_upstream|sort -u`;do
-        STRING2+="server {\n\tlisten 88;\n\tserver_name $name;\n\terror_log /opt/nginx/logs/$name.error.log;\n\tcharset utf-8;\n\tlocation / {\n\t\tproxy_pass http://$name;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\t}\n}\n\n"
+        STRING2+="server {\n\tlisten 88;\n\tserver_name $name;\n\terror_log\tlogs/$name.error.log;\n\tcharset utf-8;\n\tlocation / {\n\t\tproxy_pass http://$name;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\t}\n}\n\n"
 done
 
 echo -e $STRING2

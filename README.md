@@ -8,10 +8,10 @@ nginx reverse proxy with tcp/udp/http by consul-template
 #### 利用Mesos/K8s调度平台，终成大法；
 
 ## 核心技术栈
-#### 操作系统：CoreOS（可选）
+#### 操作系统：Centos7 / Atomic / Ubuntu Core / CoreOS（可选）
 #### 容器基础：Docker探秘
 #### 代码管理/持续集成：Gitlab & Git-CI
-#### 集群选举：Zookeeper/etcd/Consul
+#### 集群选举：Zookeeper / etcd / Consul
 #### 服务发现/服务注册：Consul & Consul-template
-#### 调度平台：Mesos Master/Slave
+#### 调度平台：Mesos / K8s / Openshift
 #### 任务框架：Mesos API / Marathon / Chronos
