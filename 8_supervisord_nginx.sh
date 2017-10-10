@@ -5,9 +5,10 @@
 #!/bin/sh
 CONSUL="192.168.145.250:8500"
 HTTP_DIR="/opt/archer"
-TEMPLATE_HTTP="/opt/nginx.http.ctmpl:$HTTP_DIR/conf/conf.d/http.conf:sed -r -i '/^ *$/d;/^$/d' $HTTP_DIR/conf/conf.d/http.conf && $HTTP_DIR/sbin/nginx -s reload"
-TEMPLATE_MARATHON="/opt/marathon.kv.ctmpl:$HTTP_DIR/conf/conf.d/marathon.conf:sed -r -i '/^ *$/d;/^$/d' $HTTP_DIR/conf/conf.d/marathon.conf && $HTTP_DIR/sbin/nginx -s reload"
-TEMPLATE_STREAM="/opt/nginx.stream.ctmpl:$HTTP_DIR/conf/conf.stream.d/stream.conf:sed -r -i '/^ *$/d;/^$/d' $HTTP_DIR/conf/conf.stream.d/stream.conf && $HTTP_DIR/sbin/nginx -s reload"
+INIT_DIR="/etc/init.d/archer"
+TEMPLATE_HTTP="/opt/nginx.http.ctmpl:$HTTP_DIR/conf/conf.d/http.conf:$INIT_DIR reload"
+TEMPLATE_MARATHON="/opt/marathon.kv.ctmpl:$HTTP_DIR/conf/conf.d/marathon.conf:$INIT_DIR reload"
+TEMPLATE_STREAM="/opt/nginx.stream.ctmpl:$HTTP_DIR/conf/conf.stream.d/stream.conf:$INIT_DIR reload"
 
 ###docker run -p 88:80 -d --name nginx --volume /tmp/service.ctmpl:/templates/service.ctmpl --link consul:consul jlordiales/nginx-consul
 
