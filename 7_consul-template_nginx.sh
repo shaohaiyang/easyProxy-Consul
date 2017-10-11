@@ -92,6 +92,7 @@ upstream {{.Name}} {
 server {
         listen {{.Port}};
         server_name {{.ID}};
+        access_log off;
         error_log	logs/{{.ID}}.error.log;
         charset utf-8;
         location / {
@@ -212,9 +213,9 @@ exit 0
 #!/bin/sh
 STRING2=
 
-cat /tmp/.marathon_upstream | awk -F@ '{name[$1]=name[$1]"\n"$2} END{for(i in name) printf "upstream %s {\nleast_conn;%s\n}\n\n",i,name[i]}'
+cat /tmp/.marathon_upstream | sed -r '/^$/d' | awk -F@ '{name[$1]=name[$1]"\n\t"$2} END{for(i in name) printf "upstream %s {\n%s\n}\n\n",i,name[i]}'
 for name in `awk -F@ '{print $1}' /tmp/.marathon_upstream|sort -u`;do
-        STRING2+="server {\n\tlisten 88;\n\tserver_name $name;\n\terror_log\tlogs/$name.error.log;\n\tcharset utf-8;\n\tlocation / {\n\t\tproxy_pass http://$name;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\t}\n}\n\n"
+        STRING2+="server {\n\tlisten 88;\n\tserver_name $name;\n\taccess_log\toff;\n\terror_log\tlogs/$name.error.log;\n\tcharset utf-8;\n\tlocation / {\n\t\tproxy_pass http://$name;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\t}\n}\n\n"
 done
 
 echo -e $STRING2
