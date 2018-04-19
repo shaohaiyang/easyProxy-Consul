@@ -4,8 +4,8 @@ nginx reverse proxy with tcp/udp/http by consul-template
 ## 微服务以：
 #### 不可变基础镜像为本质；
 #### 辅以暴露端口，配置加载，卷映射；
-#### 配合秒起秒停，角色转换，自动发现/注册，负载均衡;
-#### 利用Mesos/K8s调度平台，终成大法；
+#### 配合秒起秒停，自动发现/注册，负载均衡;
+#### 利用Mesos/K8s调度平台，角色转换，终成大法；
 
 ## 核心技术栈
 #### 操作系统：Centos7 / Atomic / Ubuntu Core / CoreOS（可选）
